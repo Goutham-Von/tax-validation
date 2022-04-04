@@ -4,9 +4,7 @@ package com.txnvalidation.exceptions;
 import java.util.List;
 
 /**
- * Base class for MessageBird exceptions that can contain Error codes from the REST service
- *
- * Created by rvt on 1/6/15.
+ * https://github.com/messagebird/java-rest-api/tree/master/api/src/main/java/com/messagebird/exceptions
  */
 public class TxnValidationException extends Exception {
     private List<ErrorReport> errors;
