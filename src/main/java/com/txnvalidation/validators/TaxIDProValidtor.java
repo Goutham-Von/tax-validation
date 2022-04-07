@@ -2,11 +2,13 @@ package com.txnvalidation.validators;
 
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.txnvalidation.ValidationResponse;
 import com.txnvalidation.ValidationStatus;
 import com.txnvalidation.exceptions.ErrorReport;
 import com.txnvalidation.exceptions.NotFoundException;
 import com.txnvalidation.exceptions.UnauthorizedException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONObject;
@@ -17,7 +19,7 @@ public class TaxIDProValidtor extends TemplateValidator {
     }
 
     @Override
-    public ValidationStatus isValid(String txn_number, String countryCode) {
+    public ValidationResponse isValid(String txn_number, String countryCode) {
         String url = baseUrl;
         url = url.concat("?key="+accessKey);
         url = url.concat("&tin="+txn_number);
@@ -28,23 +30,39 @@ public class TaxIDProValidtor extends TemplateValidator {
                 .get()
                 .addHeader("Accept", "appplication/json")
                 .build();
+        ValidationResponse validationResponse = new ValidationResponse();
         try {
             Response response = getResponse(request);
             JSONObject body = new JSONObject(response.body().string());
-            if (response.code()<=299 && response.code()>=200) {
+            validationResponse.setReponseCode(response.code());
+            validationResponse.setMessage(body);
+            if (validationResponse.getReponseCode()==200) {
                 if(body.getBoolean("valid")==Boolean.TRUE) {
-                    return ValidationStatus.VALID;
+                    validationResponse.setStatus(ValidationStatus.VALID);
                 } else if (body.getBoolean("valid")==Boolean.FALSE) {
-                    return ValidationStatus.NOT_VALID;
-                } else {
-                    return ValidationStatus.REVALIDATE;
+                    validationResponse.setStatus(ValidationStatus.NOT_VALID);
                 }
-            } else {
-                throw new Exception("Something went wrong while processing validation.");
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return ValidationStatus.REVALIDATE;
+        return validationResponse;
+//        try {
+//            Response response = getResponse(request);
+//            JSONObject body = new JSONObject(response.body().string());
+//            if (response.code()<=299 && response.code()>=200) {
+//                if(body.getBoolean("valid")==Boolean.TRUE) {
+//                    return ValidationStatus.VALID;
+//                } else if (body.getBoolean("valid")==Boolean.FALSE) {
+//                    return ValidationStatus.NOT_VALID;
+//                } else {
+//                    return ValidationStatus.REVALIDATE;
+//                }
+//            } else {
+//                throw new Exception("Something went wrong while processing validation.");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 }
