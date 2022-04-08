@@ -4,8 +4,6 @@ import java.util.List;
 
 /**
  * General exceptions send by the system. It might or might not contain a list of error codes
- *
- * Created by rvt on 1/5/15.
  */
 public class CustomException extends TxnValidationException {
     private Integer responseCode=null;

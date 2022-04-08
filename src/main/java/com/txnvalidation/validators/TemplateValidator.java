@@ -6,16 +6,10 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.txnvalidation.HttpClient;
 import com.txnvalidation.ValidationResponse;
-import com.txnvalidation.ValidationStatus;
-import javafx.util.Pair;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public abstract class TemplateValidator {
     protected String baseUrl;
