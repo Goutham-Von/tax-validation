@@ -4,24 +4,44 @@ import com.txnvalidation.validators.FonoaValidator;
 import com.txnvalidation.validators.TaxIDProValidtor;
 import com.txnvalidation.validators.TemplateValidator;
 
+import java.io.IOException;
 import java.net.Proxy;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Properties;
 
 public class ValidationService {
-    private static final String BASEURL_TAXIDPRO = "https://api.taxid.pro/validate";
-    private static final String ACCESSKEY_TAXIDPRO = "B8jMAFrNdC3kzcpYJRWmgzDAEXyRTK9G";
-    private static final String BASEURL_FONOA = "https://api-demo.fonoa.com/Lookup/v1/Validations";
-    private static final String ACCESSKEY_FONOA = "8b144782eec54b159917c8c4a367d694";
-
-
+    public static  ValidationService service = new ValidationService();
     private static TemplateValidator taxIDProValidator;
     private static TemplateValidator fonoaValidator;
-    public static  ValidationService service = new ValidationService();
+
+    private static final String ACCESSKEY_FILENAME = "accesskeys.properties";
+    private static Properties accesskeys;
 
     private Proxy proxy = null;
 
+    public static Properties loadPropTest(String filename) {
+
+        ClassLoader classLoader = ValidationService.class.getClassLoader();
+        URL resource = classLoader.getResource(filename);
+        if (resource == null) {
+            throw new IllegalArgumentException("file not found! " + filename);
+        }
+        Properties accesskeys = new Properties();
+        try {
+            accesskeys.load(resource.openStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return accesskeys;
+    }
+
     public ValidationService() {
-        taxIDProValidator = new TaxIDProValidtor(BASEURL_TAXIDPRO, ACCESSKEY_TAXIDPRO);
-        fonoaValidator = new FonoaValidator(BASEURL_FONOA, ACCESSKEY_FONOA);
+        accesskeys = loadPropTest(ACCESSKEY_FILENAME);
+        taxIDProValidator = new TaxIDProValidtor
+                (accesskeys.getProperty("BASEURL.TAXIDPRO"), accesskeys.getProperty("KEY.TAXIDPRO"));
+        fonoaValidator = new FonoaValidator
+                (accesskeys.getProperty("BASEURL.FONOA"), accesskeys.getProperty("KEY.FONOA"));
     }
 
     public static TemplateValidator validator(String countryCode) {
