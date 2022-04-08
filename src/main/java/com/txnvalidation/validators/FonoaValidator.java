@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class FonoaValidator extends TemplateValidator {
@@ -22,13 +23,18 @@ public class FonoaValidator extends TemplateValidator {
 
     @Override
     public ValidationResponse isValid(String txn_number, String countryCode) {
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), "{}");
-        Request request = new Request.Builder()
-                .url(baseUrl)
-                .post(requestBody)
-                .addHeader("Accept", "application/json")
-                .addHeader("Ocp-Apim-Subscription-Key", "8b144782eec54b159917c8c4a367d694")
-                .build();
+        Request request = requestBuilder(baseUrl, "POST",
+                null,
+                new HashMap<String, String>() {{
+                    put("Accept","application/json");
+                    put("Ocp-Apim-Subscription-Key", accessKey);
+                }},
+                new HashMap<String, String>() {{
+                    put("country_iso",countryCode);
+                    put("tin", txn_number);
+                    put("check_tin_online", "true");
+                }}
+                );
         ValidationResponse validationResponse = new ValidationResponse();
         try {
             Response response = getResponse(request);
@@ -50,32 +56,5 @@ public class FonoaValidator extends TemplateValidator {
             e.printStackTrace();
         }
         return validationResponse;
-//        try {
-//            Response response = getResponse(request);
-//            JSONObject body = new JSONObject(response.body().toString());
-//            if (response.code()<=299 && response.code()>=200) {
-//                if (body.getString("status").equalsIgnoreCase("completed")) {
-//                    if (body.getJSONObject("validation").getBoolean("tin_exists_online")) {
-//                        return ValidationStatus.VALID;
-//                    } else {
-//                        return ValidationStatus.NOT_VALID;
-//                    }
-//                } else {
-//                    return ValidationStatus.REVALIDATE;
-//                }
-//            } else if(response.code()==404) {
-//                List<ErrorReport> errors = new ArrayList();
-//                errors.add(new ErrorReport(response.code(), body.getString("errors"), response.message()));
-//                throw new NotFoundException(body.getString("errors"), errors);
-//            } else if(response.code()==401) {
-//                List<ErrorReport> errors = new ArrayList();
-//                errors.add(new ErrorReport(response.code(), "Unauthorized", response.message()));
-//                throw new UnauthorizedException(body.getString("errors"), errors);
-//            } else {
-//                throw new Exception("Something went wrong while processing validation.");
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 }

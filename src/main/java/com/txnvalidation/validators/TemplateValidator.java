@@ -31,7 +31,11 @@ public abstract class TemplateValidator {
     }
 
     public Request requestBuilder
-            (String url, Map<String, String> parameters, Map<String, String> headers, Map<String, String> body) {
+            (String url, String method,
+             Map<String, String> parameters,
+             Map<String, String> headers,
+             Map<String, String> body) {
+
         boolean start = true;
         for(Map.Entry<String, String> parameter : parameters.entrySet()) {
             if(start) {
@@ -42,10 +46,15 @@ public abstract class TemplateValidator {
             }
             url = url.concat(parameter.getKey()+"="+parameter.getValue());
         }
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), JSONObject.valueToString(body));
+
+        RequestBody requestBody = null;
+        if (!method.equalsIgnoreCase("get")){
+            requestBody = RequestBody.create(MediaType.parse("application/json"), JSONObject.valueToString(body));
+        }
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
-                .post(requestBody);
+                .method(method, requestBody);
+
         for(Map.Entry<String, String> header : headers.entrySet()) {
             requestBuilder.addHeader(header.getKey(), header.getValue());
         }
