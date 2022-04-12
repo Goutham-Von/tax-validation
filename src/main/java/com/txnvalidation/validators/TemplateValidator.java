@@ -4,7 +4,7 @@ import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
-import com.txnvalidation.HttpClient;
+import com.txnvalidation.HttpUtil;
 import com.txnvalidation.ValidationResponse;
 import org.json.JSONObject;
 
@@ -15,6 +15,10 @@ public abstract class TemplateValidator {
     protected String baseUrl;
     protected String accessKey;
 
+    public enum Method {
+        GET, POST;
+    }
+
     TemplateValidator(String baseUrl, String key) {
         this.baseUrl = baseUrl;
         this.accessKey = key;
@@ -24,6 +28,18 @@ public abstract class TemplateValidator {
         this(baseUrl, null);
     }
 
+    /**
+     * To construct request by
+     * <li>adding parameters to baseUrl</li>
+     * <li>adding headers to request</li>
+     * <li>adding body to request</li>
+     * @param url the endpoint / baseurl of api
+     * @param method to specify whether the request is GET or POST {@link Method}
+     * @param parameters
+     * @param headers
+     * @param body
+     * @return the fully loaded request with params, headers, body.
+     */
     public Request requestBuilder
             (String url, String method,
              Map<String, String> parameters,
@@ -55,10 +71,26 @@ public abstract class TemplateValidator {
         return requestBuilder.build();
     }
 
+    /**
+     * This abstract method is needs to be overridden in child class to provide
+     * validation pattern for that particular validator (for suppose different
+     * validators have different headers, params and methods to make request and
+     * capture response).
+     * @param txn_number
+     * @param countryCode
+     * @return
+     */
     abstract public ValidationResponse isValid(String txn_number, String countryCode);
 
+
+    /**
+     * To make a request and to capture the response
+     * @param request
+     * @return {@code Response}
+     * @throws IOException
+     */
     public Response getResponse(Request request) throws IOException {
-        Response response = HttpClient.request.newCall(request).execute();
+        Response response = HttpUtil.request.newCall(request).execute();
         return response;
     }
 }

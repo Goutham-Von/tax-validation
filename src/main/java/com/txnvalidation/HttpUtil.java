@@ -2,7 +2,11 @@ package com.txnvalidation;
 
 import com.squareup.okhttp.OkHttpClient;
 
-public class HttpClient {
+/**
+ * To make the http request using OKHTTP3.
+ */
+
+public class HttpUtil {
 
     /**
      * OkHttpClient has the capability of executing multiple threads at the same time.

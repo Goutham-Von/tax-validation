@@ -39,7 +39,7 @@ public class TaxIDProValidtor extends TemplateValidator {
                 if(body.getBoolean("valid")==Boolean.TRUE) {
                     validationResponse.setStatus(ValidationStatus.VALID);
                 } else if (body.getBoolean("valid")==Boolean.FALSE) {
-                    validationResponse.setStatus(ValidationStatus.NOT_VALID);
+                    validationResponse.setStatus(ValidationStatus.INVALID);
                 }
             }
         } catch (IOException e) {

@@ -46,7 +46,7 @@ public class FonoaValidator extends TemplateValidator {
                     if (body.getJSONObject("validation").getBoolean("tin_exists_online")) {
                         validationResponse.setStatus(ValidationStatus.VALID);
                     } else {
-                        validationResponse.setStatus(ValidationStatus.NOT_VALID);
+                        validationResponse.setStatus(ValidationStatus.INVALID);
                     }
                 } else {
                     validationResponse.setStatus(ValidationStatus.REVALIDATE);

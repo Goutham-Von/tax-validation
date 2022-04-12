@@ -2,6 +2,8 @@ package com.txnvalidation;
 
 public enum ValidationStatus {
     VALID,
-    NOT_VALID,
+    INVALID,
     REVALIDATE;
+    // if needed we can add _UNKNOWN because some api services are not
+    // returning the response immediately calling the endpoint.
 }

@@ -5,7 +5,7 @@ import org.json.JSONObject;
 public class ValidationResponse {
     private int reponseCode;
     private JSONObject message;
-    private ValidationStatus status = ValidationStatus.NOT_VALID;
+    private ValidationStatus status = ValidationStatus.INVALID;
 
     public int getReponseCode() {
         return reponseCode;
