@@ -1,8 +1,10 @@
 package com.txnvalidation;
 
 public class Main {
-    public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        System.out.println(TaxValidation.txnValidate("07AAACR4849R1ZN", "india"));
+    public static void main(String[] args) throws ClassNotFoundException,
+            InstantiationException, IllegalAccessException {
+        System.out.println(TaxValidation.txnValidate("07AAACR4849R1ZN",
+                "India").getStatus());
         DbConnectionService.close(DbConnectionService.connection);
     }
 }

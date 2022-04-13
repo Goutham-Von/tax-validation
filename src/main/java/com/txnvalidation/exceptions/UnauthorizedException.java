@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Exception send when you are not authorised to use this service
- *
+ * <p>
  * Created by rvt on 1/5/15.
  */
 public class UnauthorizedException extends TxnValidationException {

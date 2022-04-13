@@ -4,8 +4,8 @@ package com.txnvalidation.exceptions;
 import java.util.List;
 
 /**
-  * https://github.com/messagebird/java-rest-api/tree/master/api/src/main/java/com/messagebird/exceptions
-  */
+ * https://github.com/messagebird/java-rest-api/tree/master/api/src/main/java/com/messagebird/exceptions
+ */
 public class TxnValidationException extends Exception {
     private List<ErrorReport> errors;
 

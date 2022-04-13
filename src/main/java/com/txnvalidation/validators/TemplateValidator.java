@@ -24,7 +24,8 @@ public abstract class TemplateValidator {
         this.accessKey = key;
     }
 
-    TemplateValidator() {}
+    TemplateValidator() {
+    }
 
     TemplateValidator(String baseUrl) {
         this(baseUrl, null);
@@ -35,39 +36,41 @@ public abstract class TemplateValidator {
      * <li>adding parameters to baseUrl</li>
      * <li>adding headers to request</li>
      * <li>adding body to request</li>
-     * @param url the endpoint / baseurl of api
-     * @param method to specify whether the request is GET or POST {@link Method}
+     *
+     * @param url        the endpoint / baseurl of api
+     * @param method     to specify whether the request is GET or POST {@link Method}
      * @param parameters
      * @param headers
      * @param body
      * @return the fully loaded request with params, headers, body.
      */
     public Request requestBuilder
-            (String url, String method,
-             Map<String, String> parameters,
-             Map<String, String> headers,
-             Map<String, String> body) {
-
+    (String url, String method,
+     Map<String, String> parameters,
+     Map<String, String> headers,
+     Map<String, String> body) {
         boolean start = true;
-        for(Map.Entry<String, String> parameter : parameters.entrySet()) {
-            if(start) {
-                url = url.concat("?");
-                start = false;
-            } else {
-                url = url.concat("&");
+        if (parameters != null) {
+            for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+                if (start) {
+                    url = url.concat("?");
+                    start = false;
+                } else {
+                    url = url.concat("&");
+                }
+                url = url.concat(parameter.getKey() + "=" + parameter.getValue());
             }
-            url = url.concat(parameter.getKey()+"="+parameter.getValue());
         }
 
         RequestBody requestBody = null;
-        if (!method.equalsIgnoreCase("get")){
+        if (!method.equalsIgnoreCase("get")) {
             requestBody = RequestBody.create(MediaType.parse("application/json"), JSONObject.valueToString(body));
         }
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
                 .method(method, requestBody);
 
-        for(Map.Entry<String, String> header : headers.entrySet()) {
+        for (Map.Entry<String, String> header : headers.entrySet()) {
             requestBuilder.addHeader(header.getKey(), header.getValue());
         }
         return requestBuilder.build();
@@ -78,6 +81,7 @@ public abstract class TemplateValidator {
      * validation pattern for that particular validator (for suppose different
      * validators have different headers, params and methods to make request and
      * capture response).
+     *
      * @param txn_number
      * @param countryCode
      * @return
@@ -87,6 +91,7 @@ public abstract class TemplateValidator {
 
     /**
      * To make a request and to capture the response
+     *
      * @param request
      * @return {@code Response}
      * @throws IOException

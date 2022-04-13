@@ -1,26 +1,20 @@
 package com.txnvalidation;
 
-import com.txnvalidation.validators.FonoaValidator;
-import com.txnvalidation.validators.TaxIDProValidtor;
 import com.txnvalidation.validators.TemplateValidator;
 import javafx.util.Pair;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.Proxy;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 public class ValidationService {
-    public static  ValidationService service = new ValidationService();
-    private static TemplateValidator taxIDProValidator;
-    private static TemplateValidator fonoaValidator;
-    public static Map<String, TemplateValidator> mappingValidators = new HashMap<>();
+    public static ValidationService service = new ValidationService();
+    public static Map<String, TemplateValidator> mappingValidators;
 
     private static final String ACCESSKEY_FILENAME = "accesskeys.properties";
     private static Properties accesskeys;
@@ -30,10 +24,11 @@ public class ValidationService {
 
     /**
      * To provide accesskeys
+     *
      * @param filename the name of the .properties file which contains
-     *        accesskeys {@code String}
+     *                 accesskeys {@code String}
      * @return an properties which contains accesskey-value pairs obtained
-     *         from the given file.
+     * from the given file.
      */
     public static Properties loadPropTest(String filename) {
 
@@ -57,16 +52,17 @@ public class ValidationService {
      * methods.
      */
     public ValidationService() {
+        mappingValidators = new HashMap<>();
         accesskeys = loadPropTest(ACCESSKEY_FILENAME);
         DbConnectionService.getAllValidators()
                 .forEach((validator) -> {
                     try {
                         TemplateValidator validatorInstance = (TemplateValidator) Class.forName
-                                        (validator).newInstance();
+                                ("com.txnvalidation.validators." + validator).newInstance();
                         validatorInstance.setAccessKey(
-                                accesskeys.getProperty("KEY."+validator));
+                                accesskeys.getProperty("KEY." + validator));
                         validatorInstance.setBaseUrl(
-                                accesskeys.getProperty("BASEURL."+validator));
+                                accesskeys.getProperty("BASEURL." + validator));
                         mappingValidators.put(validator, validatorInstance);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -77,18 +73,22 @@ public class ValidationService {
     /**
      * returns an suitable Validator {@link TemplateValidator} by querying the
      * database.
+     *
      * @param countryName
      * @return {@code TemplateValidator}
      */
-    public static Pair<String, List<String>> validator(String countryName, String txnNumber) {
-        Pair<String, String> codeAndRegex = DbConnectionService.getCountry(countryName);
+    public static Pair<String, List<String>> validator(String countryName,
+                                                        String txnNumber) {
+        Pair<String, String> codeAndRegex =
+                DbConnectionService.getCountry(countryName);
         String countryCode = codeAndRegex.getKey();
         String regex = codeAndRegex.getValue();
-        Pattern regexPattern = Pattern.compile(regex);
-        if(regex!=null && regex.length()!=0 && !regexPattern.matcher(txnNumber).matches()) {
-            return null;
+        if (regex != null && regex.length() != 0) {
+            Pattern regexPattern = Pattern.compile(regex);
+            if (!regexPattern.matcher(txnNumber).matches()) { return null; }
         }
-        return new Pair<String, List<String>> (countryCode, DbConnectionService.getValidators(countryCode));
+        return new Pair<String, List<String>>(countryCode,
+                DbConnectionService.getValidators(countryCode));
     }
 }
 

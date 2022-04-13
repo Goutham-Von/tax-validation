@@ -16,13 +16,17 @@ public class TaxValidation {
 
     private static ValidationService validatorService = ValidationService.service;
 
-    public static ValidationResponse txnValidate(String txnNumber,String countryName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public static ValidationResponse txnValidate(String txnNumber, String countryName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-        Pair<String, List<String>> validators =  validatorService.validator(countryName, txnNumber);
+        Pair<String, List<String>> validators = validatorService.validator(countryName, txnNumber);
+        if (validators==null) {
+            return new ValidationResponse();
+        }
         validators.getValue().forEach(
-                (validator)-> System.out.println(ValidationService.mappingValidators.get(validator)
+                (validator) -> System.out.println(ValidationService.mappingValidators
+                        .get(validator)
                         .isValid(txnNumber, validators.getKey()).getStatus()));
-        return null;
+        return new ValidationResponse();
     }
 
 }

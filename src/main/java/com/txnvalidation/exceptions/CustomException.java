@@ -6,7 +6,8 @@ import java.util.List;
  * General exceptions send by the system. It might or might not contain a list of error codes
  */
 public class CustomException extends TxnValidationException {
-    private Integer responseCode=null;
+    private Integer responseCode = null;
+
     public CustomException(List<ErrorReport> errors) {
         super(errors);
     }
@@ -14,6 +15,7 @@ public class CustomException extends TxnValidationException {
     public CustomException(String s, List<ErrorReport> errors) {
         super(s, errors);
     }
+
     public CustomException(String s) {
         super(s, null);
     }
@@ -25,6 +27,7 @@ public class CustomException extends TxnValidationException {
     public CustomException(Throwable throwable, List<ErrorReport> errors) {
         super(throwable, errors);
     }
+
     public CustomException(Throwable throwable) {
         super(throwable, null);
     }
