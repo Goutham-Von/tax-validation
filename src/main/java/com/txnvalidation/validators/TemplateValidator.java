@@ -45,7 +45,7 @@ public abstract class TemplateValidator {
      * @return the fully loaded request with params, headers, body.
      */
     public Request requestBuilder
-    (String url, String method,
+    (String url, TemplateValidator.Method method,
      Map<String, String> parameters,
      Map<String, String> headers,
      Map<String, String> body) {
@@ -63,12 +63,12 @@ public abstract class TemplateValidator {
         }
 
         RequestBody requestBody = null;
-        if (!method.equalsIgnoreCase("get")) {
+        if (method != Method.GET) {
             requestBody = RequestBody.create(MediaType.parse("application/json"), JSONObject.valueToString(body));
         }
         Request.Builder requestBuilder = new Request.Builder()
                 .url(url)
-                .method(method, requestBody);
+                .method(method.name(), requestBody);
 
         for (Map.Entry<String, String> header : headers.entrySet()) {
             requestBuilder.addHeader(header.getKey(), header.getValue());

@@ -20,7 +20,7 @@ public class FonoaValidator extends TemplateValidator {
 
     @Override
     public ValidationResponse isValid(String txnNumber, String countryCode) {
-        Request request = requestBuilder(baseUrl, "POST",
+        Request request = requestBuilder(baseUrl, Method.POST,
                 null,
                 new HashMap<String, String>() {{
                     put("Accept", "application/json");
