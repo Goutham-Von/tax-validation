@@ -1,6 +1,9 @@
 package com.txnvalidation;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 import com.txnvalidation.validators.TemplateValidator;
+
+import java.util.List;
 
 /**
  * TaxValidation.class is used to make calls to know whether the tax number for
@@ -13,10 +16,11 @@ public class TaxValidation {
 
     private static ValidationService validatorService = ValidationService.service;
 
-    public static ValidationResponse txnValidate(String txn_number,String countryCode) {
+    public static ValidationResponse txnValidate(String txnNumber,String countryName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-        TemplateValidator validator =  validatorService.validator(countryCode);
-        return validator.isValid(txn_number, countryCode);
+        List<String> validator =  validatorService.validator(countryName, txnNumber);
+        TemplateValidator ok = (TemplateValidator) Class.forName("com.txnvalidation.validators.TaxIDProValidtor").newInstance();
+        return ok.isValid(txnNumber, "in");
     }
 
 }

@@ -3,6 +3,7 @@ package com.txnvalidation;
 import com.txnvalidation.validators.FonoaValidator;
 import com.txnvalidation.validators.TaxIDProValidtor;
 import com.txnvalidation.validators.TemplateValidator;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 public class ValidationService {
     public static  ValidationService service = new ValidationService();
@@ -69,14 +71,15 @@ public class ValidationService {
      * @param countryName
      * @return {@code TemplateValidator}
      */
-    public static TemplateValidator validator(String countryName) {
-//        List<String> daoService = Arrays.asList("in", "TaxIDProValidator", "regex");
-        List<String> daoService = DbConnectionService.getResults(countryName);
-        if(daoService.get(1).equalsIgnoreCase("fonoaValidator")) {
-            return fonoaValidator;
-        } else if(daoService.get(1).equalsIgnoreCase("TaxIDProValidator"))
-            return taxIDProValidator;
-        return null;
+    public static List<String> validator(String countryName, String txnNumber) {
+        Pair<String, String> codeAndRegex = DbConnectionService.getCountry(countryName);
+        String countryCode = codeAndRegex.getKey();
+        String regex = codeAndRegex.getValue();
+        Pattern regexPattern = Pattern.compile(regex);
+        if(regex!=null && regex.length()!=0 && !regexPattern.matcher(txnNumber).matches()) {
+            return null;
+        }
+        return DbConnectionService.getValidators(countryCode);
     }
 }
 

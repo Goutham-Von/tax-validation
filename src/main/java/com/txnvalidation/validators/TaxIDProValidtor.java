@@ -16,11 +16,11 @@ public class TaxIDProValidtor extends TemplateValidator {
     }
 
     @Override
-    public ValidationResponse isValid(String txn_number, String countryCode) {
+    public ValidationResponse isValid(String txnNumber, String countryCode) {
         Request request = requestBuilder(baseUrl, "GET",
                 new HashMap<String, String>(){{
                     put("key",accessKey);
-                    put("tin",txn_number);
+                    put("tin",txnNumber);
                     put("country",countryCode);
                     put("type","vat");
                 }},

@@ -22,7 +22,7 @@ public class FonoaValidator extends TemplateValidator {
     }
 
     @Override
-    public ValidationResponse isValid(String txn_number, String countryCode) {
+    public ValidationResponse isValid(String txnNumber, String countryCode) {
         Request request = requestBuilder(baseUrl, "POST",
                 null,
                 new HashMap<String, String>() {{
@@ -31,7 +31,7 @@ public class FonoaValidator extends TemplateValidator {
                 }},
                 new HashMap<String, String>() {{
                     put("country_iso",countryCode);
-                    put("tin", txn_number);
+                    put("tin", txnNumber);
                     put("check_tin_online", "true");
                 }}
                 );

@@ -5,9 +5,10 @@ CREATE TABLE taxvalidators (
 );
 
 CREATE TABLE country (
-                         countryname varchar(200) PRIMARY KEY,
+                         countryname varchar(30) PRIMARY KEY,
                          code char(2) DEFAULT NULL,
                          validatorid INTEGER DEFAULT NULL,
+                         regex varchar(25) DEFAULT NULL
                          FOREIGN KEY (validatorid) REFERENCES taxvalidators(id)
 );
 
