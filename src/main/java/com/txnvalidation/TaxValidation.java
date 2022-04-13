@@ -1,7 +1,7 @@
 package com.txnvalidation;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 import com.txnvalidation.validators.TemplateValidator;
+import javafx.util.Pair;
 
 import java.util.List;
 
@@ -18,9 +18,11 @@ public class TaxValidation {
 
     public static ValidationResponse txnValidate(String txnNumber,String countryName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-        List<String> validator =  validatorService.validator(countryName, txnNumber);
-        TemplateValidator ok = (TemplateValidator) Class.forName("com.txnvalidation.validators.TaxIDProValidtor").newInstance();
-        return ok.isValid(txnNumber, "in");
+        Pair<String, List<String>> validators =  validatorService.validator(countryName, txnNumber);
+        validators.getValue().forEach(
+                (validator)-> System.out.println(ValidationService.mappingValidators.get(validator)
+                        .isValid(txnNumber, validators.getKey()).getStatus()));
+        return null;
     }
 
 }

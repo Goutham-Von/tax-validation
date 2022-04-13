@@ -24,6 +24,8 @@ public abstract class TemplateValidator {
         this.accessKey = key;
     }
 
+    TemplateValidator() {}
+
     TemplateValidator(String baseUrl) {
         this(baseUrl, null);
     }
@@ -92,5 +94,13 @@ public abstract class TemplateValidator {
     public Response getResponse(Request request) throws IOException {
         Response response = HttpUtil.request.newCall(request).execute();
         return response;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 }

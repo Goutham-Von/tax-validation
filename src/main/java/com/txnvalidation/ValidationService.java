@@ -6,22 +6,21 @@ import com.txnvalidation.validators.TemplateValidator;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Proxy;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class ValidationService {
     public static  ValidationService service = new ValidationService();
     private static TemplateValidator taxIDProValidator;
     private static TemplateValidator fonoaValidator;
+    public static Map<String, TemplateValidator> mappingValidators = new HashMap<>();
 
     private static final String ACCESSKEY_FILENAME = "accesskeys.properties";
     private static Properties accesskeys;
@@ -59,10 +58,20 @@ public class ValidationService {
      */
     public ValidationService() {
         accesskeys = loadPropTest(ACCESSKEY_FILENAME);
-        taxIDProValidator = new TaxIDProValidtor
-                (accesskeys.getProperty("BASEURL.TAXIDPRO"), accesskeys.getProperty("KEY.TAXIDPRO"));
-        fonoaValidator = new FonoaValidator
-                (accesskeys.getProperty("BASEURL.FONOA"), accesskeys.getProperty("KEY.FONOA"));
+        DbConnectionService.getAllValidators()
+                .forEach((validator) -> {
+                    try {
+                        TemplateValidator validatorInstance = (TemplateValidator) Class.forName
+                                        (validator).newInstance();
+                        validatorInstance.setAccessKey(
+                                accesskeys.getProperty("KEY."+validator));
+                        validatorInstance.setBaseUrl(
+                                accesskeys.getProperty("BASEURL."+validator));
+                        mappingValidators.put(validator, validatorInstance);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     /**
@@ -71,7 +80,7 @@ public class ValidationService {
      * @param countryName
      * @return {@code TemplateValidator}
      */
-    public static List<String> validator(String countryName, String txnNumber) {
+    public static Pair<String, List<String>> validator(String countryName, String txnNumber) {
         Pair<String, String> codeAndRegex = DbConnectionService.getCountry(countryName);
         String countryCode = codeAndRegex.getKey();
         String regex = codeAndRegex.getValue();
@@ -79,7 +88,7 @@ public class ValidationService {
         if(regex!=null && regex.length()!=0 && !regexPattern.matcher(txnNumber).matches()) {
             return null;
         }
-        return DbConnectionService.getValidators(countryCode);
+        return new Pair<String, List<String>> (countryCode, DbConnectionService.getValidators(countryCode));
     }
 }
 

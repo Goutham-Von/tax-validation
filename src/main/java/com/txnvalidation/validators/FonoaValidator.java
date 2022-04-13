@@ -21,6 +21,8 @@ public class FonoaValidator extends TemplateValidator {
         super(baseurlFonoa, accesskeyFonoa);
     }
 
+    public FonoaValidator() { super(); }
+
     @Override
     public ValidationResponse isValid(String txnNumber, String countryCode) {
         Request request = requestBuilder(baseUrl, "POST",

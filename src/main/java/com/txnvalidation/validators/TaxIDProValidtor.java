@@ -15,6 +15,8 @@ public class TaxIDProValidtor extends TemplateValidator {
         super(apiurlTaxidpro, accesskeyTaxidpro);
     }
 
+    public TaxIDProValidtor() { super(); }
+
     @Override
     public ValidationResponse isValid(String txnNumber, String countryCode) {
         Request request = requestBuilder(baseUrl, "GET",
