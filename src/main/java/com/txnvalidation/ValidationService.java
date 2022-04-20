@@ -46,19 +46,14 @@ public class ValidationService {
         return accesskeys;
     }
 
-    /**
-     * constructor is being used to Loads properties from the given accesskey
-     * filename and instantiate the different validators to use their static
-     * methods.
-     */
-    public ValidationService() {
-        mappingValidators = new HashMap<>();
-        accesskeys = loadPropTest(ACCESSKEY_FILENAME);
+    public static void updateValidatorsMapping () {
         DbConnectionService.getAllValidators()
                 .forEach((validator) -> {
                     try {
-                        TemplateValidator validatorInstance = (TemplateValidator) Class.forName
-                                ("com.txnvalidation.validators." + validator).newInstance();
+                        TemplateValidator validatorInstance = (TemplateValidator)
+                                Class.forName ("com.txnvalidation.validators" +
+                                                "." + validator)
+                                .newInstance();
                         validatorInstance.setAccessKey(
                                 accesskeys.getProperty("KEY." + validator));
                         validatorInstance.setBaseUrl(
@@ -68,6 +63,17 @@ public class ValidationService {
                         e.printStackTrace();
                     }
                 });
+    }
+
+    /**
+     * constructor is being used to Loads properties from the given accesskey
+     * filename and instantiate the different validators to use their static
+     * methods.
+     */
+    public ValidationService() {
+        mappingValidators = new HashMap<>();
+        accesskeys = loadPropTest(ACCESSKEY_FILENAME);
+        updateValidatorsMapping();
     }
 
     /**

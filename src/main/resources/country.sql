@@ -1,20 +1,30 @@
+USE txnvalidationDB;
+
+DROP TABLE country;
+
 CREATE TABLE taxvalidators (
-                               id INTEGER PRIMARY KEY,
-                               taxvalidator varchar(50),
+                               taxvalidator varchar(50) PRIMARY KEY,
                                isworking char(3) DEFAULT 'YES'
 );
 
-CREATE TABLE country (
-                         countryname varchar(30) PRIMARY KEY,
-                         code char(2) DEFAULT NULL,
-                         validatorid INTEGER DEFAULT NULL,
-                         regex varchar(25) DEFAULT NULL
-                         FOREIGN KEY (validatorid) REFERENCES taxvalidators(id)
+CREATE TABLE validators (
+                            countrycode char(2),
+                            taxvalidator varchar(50),
+                            FOREIGN KEY (taxvalidator) REFERENCES taxvalidators(taxvalidator)
 );
 
-INSERT INTO taxvalidators(id, taxvalidator) VALUES
-                                                (0, 'TaxIDProValidator'),
-                                                (1, 'FonoaValidator');
+CREATE TABLE country (
+                         countryname varchar(50) PRIMARY KEY,
+                         code char(2) DEFAULT NULL,
+                         regex varchar(100) DEFAULT NULL
+);
+
+
+
+INSERT INTO taxvalidators(taxvalidator) VALUES
+                                            ('TaxIDProValidator'),
+                                            ('FonoaValidator');
+
 
 
 INSERT INTO country(countryname, code)
@@ -117,6 +127,7 @@ VALUES
     ('Hong Kong','HK'),
     ('Hungary','HU'),
     ('Iceland','IS'),
+    ('India', 'IN'),
     ('Indonesia','ID'),
     ('Iran','IR'),
     ('Iraq','IQ'),
@@ -179,10 +190,53 @@ VALUES
     ('Zambia','ZM'),
     ('Zimbabwe','ZW');
 
-INSERT INTO country(countryname, code, validatorid) VALUES
-    ('India','IN', 0);
+UPDATE country
+SET regex='^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$'
+WHERE countryname='India';
 
--- SELECT country.code, taxvalidators.taxvalidator
--- FROM country
---          INNER JOIN taxvalidators ON taxvalidators.id = country.validatorid
--- where country.countryname='india';
+UPDATE country
+SET regex='(AT)?U[0-9]{8}'
+WHERE countryname='Austria';
+
+
+
+INSERT INTO validators VALUES
+                           ('in', 'TaxIDProValidator'),
+                           ('in', 'FonoaValidator');
+
+SELECT code, regex FROM country where countryname='india';
+SELECT taxvalidator FROM validators where countrycode='in';
+
+UPDATE country SET regex='(SK)?[0-9]{10}' WHERE countryname='Slovakia';``
+
+SELECT * FROM country;
+
+
+UPDATE country SET regex='(AT)?U[0-9]{8}' WHERE countryname='Austria';
+UPDATE country SET regex='(BE)?0[0-9]{9}' WHERE countryname='Belgium';
+UPDATE country SET regex='(BG)?[0-9]{9,10}' WHERE countryname='Bulgaria';
+UPDATE country SET regex='(HR)?[0-9]{11}' WHERE countryname='Croatia';
+UPDATE country SET regex='(CY)?[0-9]{8}[A-Z]' WHERE countryname='Cyprus';
+UPDATE country SET regex='(CZ)?[0-9]{8,10}' WHERE countryname='Czech';
+UPDATE country SET regex='(DE)?[0-9]{9}' WHERE countryname='Germany';
+UPDATE country SET regex='(DK)?[0-9]{8}' WHERE countryname='Denmark';
+UPDATE country SET regex='(EE)?[0-9]{9}' WHERE countryname='Estonia';
+UPDATE country SET regex='(EL)?[0-9]{9}' WHERE countryname='Greece';
+UPDATE country SET regex='ES[A-Z][0-9]{7}(?:[0-9]|[A-Z])' WHERE countryname='Spain';
+UPDATE country SET regex='(FI)?[0-9]{8}' WHERE countryname='Finland';
+UPDATE country SET regex='(FR)?[0-9A-Z]{2}[0-9]{9}' WHERE countryname='France';
+UPDATE country SET regex='(GB)?([0-9]{9}([0-9]{3})?|[A-Z]{2}[0-9]{3})' WHERE countryname='United';
+UPDATE country SET regex='(HU)?[0-9]{8}' WHERE countryname='Hungary';
+UPDATE country SET regex='(IE)?[0-9]{7}[A-Z]{1,2}' WHERE countryname='Ireland';
+UPDATE country SET regex='(IE)?[0-9][A-Z][0-9]{5}[A-Z]' WHERE countryname='Ireland';
+UPDATE country SET regex='(IT)?[0-9]{11}' WHERE countryname='Italy';
+UPDATE country SET regex='(LT)?([0-9]{9}|[0-9]{12})' WHERE countryname='Lithuania';
+UPDATE country SET regex='(LU)?[0-9]{8}' WHERE countryname='Luxembourg';
+UPDATE country SET regex='(LV)?[0-9]{11}' WHERE countryname='Latvia';
+UPDATE country SET regex='(MT)?[0-9]{8}' WHERE countryname='Malta';
+UPDATE country SET regex='(NL)?[0-9]{9}B[0-9]{2}' WHERE countryname='Netherlands';
+UPDATE country SET regex='(PL)?[0-9]{10}' WHERE countryname='Poland';
+UPDATE country SET regex='(PT)?[0-9]{9}' WHERE countryname='Portugal';
+UPDATE country SET regex='(RO)?[0-9]{2,10}' WHERE countryname='Romania';
+UPDATE country SET regex='(SE)?[0-9]{12}' WHERE countryname='Sweden';
+UPDATE country SET regex='(SI)?[0-9]{8}' WHERE countryname='Slovenia';

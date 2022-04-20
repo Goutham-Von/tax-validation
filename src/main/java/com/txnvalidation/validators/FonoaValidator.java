@@ -36,6 +36,7 @@ public class FonoaValidator extends TemplateValidator {
         try {
             Response response = getResponse(request);
             JSONObject body = new JSONObject(response.body().string());
+            validationResponse.setTimeStamp();
             validationResponse.setReponseCode(response.code());
             validationResponse.setMessage(body);
             if (response.code() <= 299 && response.code() >= 200) {
